@@ -1,4 +1,3 @@
-// リスト3.10
 package main
 
 import (

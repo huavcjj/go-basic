@@ -18,7 +18,7 @@ func (h *WorldHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	hello := HelloHandler{} // helloはハンドラ（http.Handler）。ServeHTTPを持っているので
+	hello := HelloHandler{}
 	world := WorldHandler{}
 
 	server := http.Server{
@@ -30,4 +30,5 @@ func main() {
 	http.Handle("/world", &world)
 
 	server.ListenAndServe()
+
 }
