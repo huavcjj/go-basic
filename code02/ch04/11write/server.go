@@ -1,9 +1,8 @@
-// リスト4.11
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
