@@ -8,7 +8,7 @@ import (
 )
 
 func setMessage(w http.ResponseWriter, r *http.Request) {
-	msg := []byte("Hello World!")
+	msg := []byte("Hello, World!")
 	c := http.Cookie{
 		Name:  "flash",
 		Value: base64.URLEncoding.EncodeToString(msg),
@@ -20,7 +20,7 @@ func showMessage(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("flash")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			fmt.Fprintln(w, "メッセージがありません。")
+			fmt.Fprintln(w, "No message found")
 		}
 	} else {
 		rc := http.Cookie{
@@ -41,4 +41,5 @@ func main() {
 	http.HandleFunc("/set_message", setMessage)
 	http.HandleFunc("/show_message", showMessage)
 	server.ListenAndServe()
+
 }
