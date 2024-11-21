@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres
+    ports:
+      - "5432:5432" 
+    environment:
+      POSTGRES_USER: gwp      
+      POSTGRES_PASSWORD: gwp  
+      POSTGRES_DB: gwp     
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+
+volumes:
+  postgres_data:
+    driver: local
