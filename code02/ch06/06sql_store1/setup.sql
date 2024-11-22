@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS posts;
+drop table if exists posts;
 
-CREATE TABLE posts (
-  id      SERIAL PRIMARY KEY,
-  content TEXT,
-  author  VARCHAR(255)
+create table posts (
+  id      serial primary key, 
+  content text,              
+  author  varchar(255)        
 );

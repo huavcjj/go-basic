@@ -1,3 +1,13 @@
+/*
+ 1. Postgresを起動
+ 2. createuser -P -d gwp
+    （passwd gwp）
+ 3. creatdb gwp
+ 4. psql -U gwp -f setup.sql -d gwp
+ 5. go get github.com/lib/pq
+ 6. go run store.go
+*/
+
 package main
 
 import (
@@ -15,6 +25,7 @@ type Post struct {
 
 var Db *sql.DB
 
+// connect to the Db
 func init() {
 	var err error
 	Db, err = sql.Open("postgres", "user=gwp dbname=gwp password=gwp sslmode=disable")
@@ -23,8 +34,9 @@ func init() {
 	}
 }
 
+// get all posts
 func Posts(limit int) (posts []Post, err error) {
-	rows, err := Db.Query("SELECT id, content, author FROM posts LIMIT $1", limit)
+	rows, err := Db.Query("select id, content, author from posts limit $1", limit)
 	if err != nil {
 		return
 	}
@@ -40,56 +52,71 @@ func Posts(limit int) (posts []Post, err error) {
 	return
 }
 
+// Get a single post
 func GetPost(id int) (post Post, err error) {
 	post = Post{}
-	err = Db.QueryRow("SELECT id, content, author FROM posts WHERE id = $1", id).Scan(&post.Id, &post.Content, &post.Author)
+	err = Db.QueryRow("select id, content, author from posts where id = $1", id).Scan(&post.Id, &post.Content, &post.Author)
 	return
 }
 
+// Create a new post
 func (post *Post) Create() (err error) {
-	statement := "INSERT INTO posts (content, author) VALUES ($1, $2) RETURNING id"
+	statement := "insert into posts (content, author) values ($1, $2) returning id"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
 	err = stmt.QueryRow(post.Content, post.Author).Scan(&post.Id)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (post *Post) Update() (err error) {
-	_, err = Db.Exec("UPDATE posts SET content = $2, author = $3 WHERE id = $1", post.Id, post.Content, post.Author)
 	return
 }
 
+// Update a post
+func (post *Post) Update() (err error) {
+	_, err = Db.Exec("update posts set content = $2, author = $3 where id = $1", post.Id, post.Content, post.Author)
+	return
+}
+
+// Delete a post
 func (post *Post) Delete() (err error) {
-	_, err = Db.Exec("DELETE FROM posts WHERE id = $1", post.Id)
+	_, err = Db.Exec("delete from posts where id = $1", post.Id)
+	return
+}
+
+// Delete all posts
+func DeleteAll() (err error) {
+	_, err = Db.Exec("delete from posts")
 	return
 }
 
 func main() {
+	post := Post{Content: "Hello World!", Author: "Sau Sheong"}
 
-	post := Post{Content: "Hello, World!", Author: "Sau Sheong"}
-	fmt.Println(post)
-
+	// Create a post
+	fmt.Println(post) // {0 Hello World! Sau Sheong}
 	post.Create()
-	fmt.Println(post)
+	fmt.Println(post) // {1 Hello World! Sau Sheong}
 
+	// Get one post
 	readPost, _ := GetPost(post.Id)
-	fmt.Println(readPost)
+	fmt.Println(readPost) // {1 Hello World! Sau Sheong}
 
+	// Update the post
 	readPost.Content = "Bonjour Monde!"
 	readPost.Author = "Pierre"
 	readPost.Update()
 
+	// Get all posts
 	posts, _ := Posts(10)
-	fmt.Println(posts)
+	fmt.Println(posts) // [{1 Bonjour Monde! Pierre}]
 
+	// Delete the post
 	readPost.Delete()
 
+	// Get all posts
 	posts, _ = Posts(10)
-	fmt.Println(posts)
+	fmt.Println(posts) // []
+
+	// Delete all posts
+	// DeleteAll()
 }
