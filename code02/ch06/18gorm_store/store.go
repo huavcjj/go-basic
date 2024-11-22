@@ -1,39 +1,35 @@
-// リスト6.18
-/* 
- 1. go get github.com/jinzhu/gorm
- 2. go run store.go
-*/
 package main
 
 import (
-  "fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/lib/pq"
+	"fmt"
 	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type Post struct {
 	Id        int
 	Content   string
-	Author    string `sql:"not null"`
-	Comments  []Comment
+	Author    string    `gorm:"not null"`
+	Comments  []Comment `gorm:"foreignKey:PostId"`
 	CreatedAt time.Time
 }
 
 type Comment struct {
 	Id        int
 	Content   string
-	Author    string `sql:"not null"`
-	PostId    int    
+	Author    string `gorm:"not null"`
+	PostId    int    `gorm:"not null"`
 	CreatedAt time.Time
 }
 
 var Db *gorm.DB
 
-// connect to the Db
 func init() {
 	var err error
-	Db, err = gorm.Open("postgres", "user=gwp dbname=gwp password=gwp sslmode=disable")
+	dsn := "user=gwp dbname=gwp password=gwp sslmode=disable"
+	Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -41,21 +37,26 @@ func init() {
 }
 
 func main() {
+	// 新規投稿の作成
 	post := Post{Content: "Hello World!", Author: "Sau Sheong"}
-  fmt.Println(post) // {0 Hello World! Sau Sheong [] 0001-01-01 00:00:00 +0000 UTC}
-  
-	// Create a post
-	Db.Create(&post)
-  fmt.Println(post) // {1 Hello World! Sau Sheong [] 2015-04-13 11:38:50.91815604 +0800 SGT}
-  
-  // Add a comment
-	comment := Comment{Content: "いい投稿だね！", Author: "Joe"}
-	Db.Model(&post).Association("Comments").Append(comment)
+	fmt.Println(post)
 
-  // Get comments from a post
-	var readPost Post  
-	Db.Where("author = $1", "Sau Sheong").First(&readPost)
-  var comments []Comment
-  Db.Model(&readPost).Related(&comments)
-  fmt.Println(comments[0]) // {1 Good post! Joe 1 2015-04-13 11:38:50.920377 +0800 SGT}
+	Db.Create(&post)
+	fmt.Println(post)
+
+	// コメントの追加
+	comment := Comment{Content: "いい投稿だね！", Author: "Joe", PostId: post.Id}
+	Db.Create(&comment)
+
+	// 投稿とそのコメントを取得
+	var readPost Post
+	err := Db.Preload("Comments").Where("author = ?", "Sau Sheong").First(&readPost).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// コメントの確認
+	for _, c := range readPost.Comments {
+		fmt.Println(c)
+	}
 }
