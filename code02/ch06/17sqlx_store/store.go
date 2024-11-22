@@ -1,12 +1,12 @@
-// リスト6.17
 /*
-  1. go get "github.com/jmoiron/sqlx"
-	2. go run store.go
+1. go get "github.com/jmoiron/sqlx"
+2. go run store.go
 */
 package main
 
 import (
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -14,7 +14,7 @@ import (
 type Post struct {
 	Id         int
 	Content    string
-	AuthorName string `db: author`
+	AuthorName string `db:"author"`
 }
 
 var Db *sqlx.DB
