@@ -1,8 +1,6 @@
-// リスト6.14
 /*
  1. Postgresを起動
  2. psql -U gwp -f setup.sql -d gwp
-   （一番最初は ERRORが表示されるが、そのままでOK)
  3. go run store.go
 */
 
@@ -12,6 +10,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	_ "github.com/lib/pq"
 )
 
@@ -42,7 +41,7 @@ func init() {
 
 func (comment *Comment) Create() (err error) {
 	if comment.Post == nil {
- 		err = errors.New("投稿が見つかりません")
+		err = errors.New("投稿が見つかりません")
 		// err = errors.New("Post not found")
 		return
 	}
@@ -55,7 +54,9 @@ func GetPost(id int) (post Post, err error) {
 	post = Post{}
 	post.Comments = []Comment{}
 	err = Db.QueryRow("select id, content, author from posts where id = $1", id).Scan(&post.Id, &post.Content, &post.Author)
-
+	if err != nil {
+		return
+	}
 	rows, err := Db.Query("select id, content, author from comments where post_id = $1", id)
 	if err != nil {
 		return
@@ -84,11 +85,11 @@ func main() {
 
 	// Add a comment
 	// comment := Comment{Content: "Good post!", Author: "Joe", Post: &post}
- 	comment := Comment{Content: "いい投稿だね！", Author: "Joe", Post: &post}
+	comment := Comment{Content: "いい投稿だね！", Author: "Joe", Post: &post}
 	comment.Create()
 	readPost, _ := GetPost(post.Id)
 
-	fmt.Println(readPost)    // {1 Hello World! Sau Sheong [{1 いい投稿だね！ Joe 0xc420018800}]}
+	fmt.Println(readPost)                  // {1 Hello World! Sau Sheong [{1 いい投稿だね！ Joe 0xc420018800}]}
 	fmt.Println(readPost.Comments)         // [{1 いい投稿だね！ Joe 0xc420018800}]
 	fmt.Println(readPost.Comments[0].Post) // &{1 Hello World! Sau Sheong [{1 いい投稿だね！ Joe 0xc420018800}]}
 }

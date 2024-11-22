@@ -1,15 +1,18 @@
-drop table posts cascade;
-drop table comments;
 
-create table posts (
-  id      serial primary key,
-  content text,
-  author  varchar(255)
+DROP TABLE IF EXISTS comments;
+
+DROP TABLE IF EXISTS posts;
+
+CREATE TABLE posts (
+  id      SERIAL PRIMARY KEY,
+  content TEXT,
+  author  VARCHAR(255)
 );
 
-create table comments (
-  id      serial primary key,
-  content text,
-  author  varchar(255),
-  post_id integer references posts(id)
+
+CREATE TABLE comments (
+  id      SERIAL PRIMARY KEY,
+  content TEXT,
+  author  VARCHAR(255),
+  post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE
 );
