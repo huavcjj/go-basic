@@ -1,4 +1,3 @@
-// リスト7.8
 package main
 
 import (

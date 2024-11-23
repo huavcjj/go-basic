@@ -1,10 +1,9 @@
-// リスト7.10
 package main
 
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -33,21 +32,17 @@ func main() {
 		return
 	}
 	defer jsonFile.Close()
-	jsonData, err := ioutil.ReadAll(jsonFile)
+
+	jsonData, err := io.ReadAll(jsonFile)
 	if err != nil {
 		fmt.Println("Error reading JSON data:", err)
 		return
 	}
 
-	fmt.Println(string(jsonData))
+	// fmt.Println(string(jsonData))
+
 	var post Post
 	json.Unmarshal(jsonData, &post)
-	fmt.Println(post.Id)
-	fmt.Println(post.Content)
-	fmt.Println(post.Author.Id)
-	fmt.Println(post.Author.Name)
-	fmt.Println(post.Comments[0].Id)
-	fmt.Println(post.Comments[0].Content)
-	fmt.Println(post.Comments[0].Author)
+	fmt.Println(post)
 
 }
