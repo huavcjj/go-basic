@@ -1,8 +1,8 @@
-// リスト7.14
 package main
 
 import (
 	"database/sql"
+
 	_ "github.com/lib/pq"
 )
 
@@ -20,13 +20,13 @@ func init() {
 // Get a single post
 func retrieve(id int) (post Post, err error) {
 	post = Post{}
-	err = Db.QueryRow("select id, content, author from posts where id = $1", id).Scan(&post.Id, &post.Content, &post.Author)
+	err = Db.QueryRow("SELECT id, content, author FROM posts WHERE id = $1", id).Scan(&post.Id, &post.Content, &post.Author)
 	return
 }
 
 // Create a new post
 func (post *Post) create() (err error) {
-	statement := "insert into posts (content, author) values ($1, $2) returning id"
+	statement := "INSERT INTO posts (content, author) VALUES ($1, $2) RETURNING id"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -38,12 +38,12 @@ func (post *Post) create() (err error) {
 
 // Update a post
 func (post *Post) update() (err error) {
-	_, err = Db.Exec("update posts set content = $2, author = $3 where id = $1", post.Id, post.Content, post.Author)
+	_, err = Db.Exec("UPDATE posts SET content = $2, author = $3 WHERE id = $1", post.Id, post.Content, post.Author)
 	return
 }
 
 // Delete a post
 func (post *Post) delete() (err error) {
-	_, err = Db.Exec("delete from posts where id = $1", post.Id)
+	_, err = Db.Exec("DELETE FROM posts WHERE id = $1", post.Id)
 	return
 }

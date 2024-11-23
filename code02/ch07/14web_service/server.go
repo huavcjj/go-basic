@@ -1,12 +1,13 @@
-// リスト7.15
 /*
-
 ＜まずPostgreSQLを起動＞
-$ psql -f install.sql 
-$ psql -f setup.sql
-$ go build
-$ ./14web_service &
-$ ./script_create
+$ psql -U gwp -d gwp -f setup.sql
+$ go run server.go data.go
+$ curl -i -X POST -H "Content-Type: application/json"  -d '{"content":"My first post","author":"Sau Sheong"}' http://127.0.0.1:8080/post/
+$ psql -U gwp -d gwp -c "select * from posts;"
+$ curl -i -X GET http://127.0.0.1:8080/post/1
+$ curl -i -X PUT -H "Content-Type: application/json"  -d '{"content":"Updated post","author":"Sau Sheong"}' http://127.0.0.1:8080/post/1
+$ psql -U gwp -d gwp -c "select * from posts;"
+$ curl -i -X DELETE http://127.0.0.1:8080/post/1
 $ psql -U gwp -d gwp -c "select * from posts;"
 */
 package main
@@ -32,7 +33,6 @@ func main() {
 	server.ListenAndServe()
 }
 
-// main handler function
 func handleRequest(w http.ResponseWriter, r *http.Request) {
 	var err error
 	switch r.Method {
@@ -51,8 +51,6 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Retrieve a post
-// GET /post/1
 func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
@@ -71,8 +69,6 @@ func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
-// Create a post
-// POST /post/
 func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
 	len := r.ContentLength
 	body := make([]byte, len)
@@ -87,8 +83,6 @@ func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
-// Update a post
-// PUT /post/1
 func handlePut(w http.ResponseWriter, r *http.Request) (err error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
@@ -110,8 +104,6 @@ func handlePut(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
-// Delete a post
-// DELETE /post/1
 func handleDelete(w http.ResponseWriter, r *http.Request) (err error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
