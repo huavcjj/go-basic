@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	_ "github.com/lib/pq"
 	"net/http"
 	"path"
 	"strconv"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -23,7 +24,6 @@ func main() {
 	http.HandleFunc("/post/", handleRequest(&Post{Db: db}))
 	server.ListenAndServe()
 }
-
 
 // main handler function
 func handleRequest(t Text) http.HandlerFunc {

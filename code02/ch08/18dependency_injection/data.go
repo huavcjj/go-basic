@@ -2,14 +2,15 @@ package main
 
 import (
 	"database/sql"
+
 	_ "github.com/lib/pq"
 )
 
 type Text interface {
-  fetch(id int) (err error)
-  create() (err error)
-  update() (err error)
-  delete() (err error)
+	fetch(id int) (err error)
+	create() (err error)
+	update() (err error)
+	delete() (err error)
 }
 
 type Post struct {
