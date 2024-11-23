@@ -33,6 +33,8 @@ func main() {
 		fmt.Println("Error creating XML file:", err)
 		return
 	}
+	defer xmlFile.Close()
+
 	encoder := xml.NewEncoder(xmlFile)
 	encoder.Indent("", "\t")
 	err = encoder.Encode(&post)
