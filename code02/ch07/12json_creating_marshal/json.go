@@ -1,9 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/bytedance/sonic"
 )
 
 type Post struct {
@@ -46,7 +47,7 @@ func main() {
 		},
 	}
 
-	output, err := json.MarshalIndent(&post, "", "  ")
+	output, err := sonic.MarshalIndent(&post, "", "  ")
 	if err != nil {
 		fmt.Println("Error marshalling to JSON:", err)
 		return

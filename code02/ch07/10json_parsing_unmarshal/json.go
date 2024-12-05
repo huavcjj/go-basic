@@ -1,10 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/bytedance/sonic"
 )
 
 type Post struct {
@@ -42,7 +43,7 @@ func main() {
 	// fmt.Println(string(jsonData))
 
 	var post Post
-	json.Unmarshal(jsonData, &post)
+	sonic.Unmarshal(jsonData, &post)
 	fmt.Println(post)
 
 }
