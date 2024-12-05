@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -17,6 +18,28 @@ func foo() string {
 	str = "Hello, Go!"
 	return str
 
+}
+
+func hello() {
+	time.Sleep(2 * time.Second)
+	fmt.Println("Hello!")
+}
+
+func world() {
+	fmt.Println("World!")
+	go hello()
+}
+
+func f1() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in f1", r)
+		}
+	}()
+	a, b := 3, 0
+	fmt.Println(a, b)
+	_ = a / b
+	fmt.Println("f1 done")
 }
 
 func main() {
@@ -42,5 +65,23 @@ func main() {
 	duration := time.Duration(10) * time.Second
 	end := start.Add(duration)
 	fmt.Println(end.Format("2006-01-02 15:04:05"))
+
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		fmt.Println("goroutine 1")
+	}()
+	go func() {
+		defer wg.Done()
+		fmt.Println("goroutine 2")
+	}()
+	wg.Wait()
+
+	go world()
+
+	go f1()
+	time.Sleep(3 * time.Second)
+	fmt.Println("main done")
 
 }
