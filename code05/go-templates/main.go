@@ -11,7 +11,23 @@ func main() {
 		// tmpl := template.Must(template.ParseFiles("home.html", "page_header.html", "page_body.html"))
 		tmpl := template.Must(template.ParseGlob("templates/*.html"))
 
-		err := tmpl.ExecuteTemplate(w, "home.html", nil)
+		data := struct {
+			Name        string
+			Title       string
+			Description string
+			Socials     map[string]string
+		}{
+			Name:        "Golang",
+			Title:       "Go テンプレートの例",
+			Description: "これは、Goのテンプレートを使用したシンプルな例です。テンプレートは別ファイルで定義され、template.Must 関数を使用して解析されます。データは構造体を通じてテンプレートに渡されます。この構造体を使用してテンプレートをレンダリングします。",
+			Socials: map[string]string{
+				"Twitter":  "https://twitter.com/golang",
+				"Facebook": "https://www.facebook.com/golang",
+				"GitHub":   "https://github.com/golang",
+			},
+		}
+
+		err := tmpl.ExecuteTemplate(w, "home.html", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
