@@ -12,6 +12,13 @@
 
     <main>
         {{template "mainContentFragment" .}}
+
+        <h3>Features</h3>
+        <ul>
+            {{range .Features}}
+            <li>{{.}}</li>
+            {{end}}
+        </ul>
     </main>
 
     <footer>

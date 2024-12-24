@@ -16,6 +16,7 @@ func main() {
 			Title       string
 			Description string
 			Socials     map[string]string
+			Features    []string
 		}{
 			Name:        "Golang",
 			Title:       "Go テンプレートの例",
@@ -24,6 +25,10 @@ func main() {
 				"Twitter":  "https://twitter.com/golang",
 				"Facebook": "https://www.facebook.com/golang",
 				"GitHub":   "https://github.com/golang",
+			},
+			Features: []string{
+				"テンプレートの解析",
+				"テンプレートのレンダリング",
 			},
 		}
 
